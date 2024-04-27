@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 5
+    },
+    "auditLog": "logs\\.ea5c42e0a4fc0157a6c00832c1d990d019a79073-audit.json",
+    "files": [
+        {
+            "date": 1714220825962,
+            "name": "logs\\laravel-2024-04-27.log",
+            "hash": "cdc8fad8235922797474f1dbae5aec819a8662ba6ccf5b41e5d3851b9a226977"
+        }
+    ],
+    "hashType": "sha256"
+}
