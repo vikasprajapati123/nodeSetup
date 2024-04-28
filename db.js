@@ -12,8 +12,8 @@ sequelize.authenticate()
 .then(() => {
 
 
-  
-  console.log('Connection to the database has been established successfully.yahooo');
+
+  console.log('Connection stable to the database has been established successfully.yahooo');
 })
 .catch((error) => {
   console.error('Unable to connect to the database:', error);
