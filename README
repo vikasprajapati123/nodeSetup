@@ -1,0 +1,13 @@
+Logger file create 
+
+
+1.winston package create (only create single file for example laravel.log)  npm install winston
+2.npm install winston winston-daily-rotate-file (daily basic file create )command
+
+
+Json Web token
+
+npm install jsonwebtoken
+
+
+

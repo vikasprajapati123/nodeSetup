@@ -10,9 +10,6 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, '', {
 
 sequelize.authenticate()
 .then(() => {
-
-
-
   console.log('Connection stable to the database has been established successfully.yahooo');
 })
 .catch((error) => {

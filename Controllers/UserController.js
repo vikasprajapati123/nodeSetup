@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 
 const getUsers = async (req, res) => {
     try {
@@ -16,8 +17,9 @@ const createUsers = async (req, res) => {
         console.log(req.body);
         const { name, email, gender } = req.body;
         console.log(User); // 
-        const newUser = await Usercreate({ name, email, gender });
-        res.status(201).json(newUser);
+        const newUser = await User.create({ name, email, gender });
+        const token = generateToken(newUser);
+        res.status(201).json({"user":newUser,'token':token});
     } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -56,6 +58,33 @@ const sendMail = async(req,res)=>{
     }
 };
 
+const generateToken = (user) => {
+    return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+};
+
+const Login=async(req,res)=>{
+    const {email,password}=req.body;
+    try{
+        const user = await User.findOne({ where: { email: email } });
+        console.log("emailllllllllllllllllllll",user);
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+        const token = jwt.sign({ id: user.id, username: user.email,name:user.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.json({ token });
+    }
+    catch(error){
+        res.status(500).json({ "error":error });
+    } 
+};
+
+const getData=async(req,res)=>{
+    const user=req.user;
+    res.status(200).json({"user":user});
+}
+  
+
+
 
   
 
@@ -63,5 +92,7 @@ const sendMail = async(req,res)=>{
 module.exports = {
     getUsers,
     createUsers,
-    sendMail
+    sendMail,
+    Login,
+    getData
 };
