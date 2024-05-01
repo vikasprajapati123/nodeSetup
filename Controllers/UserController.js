@@ -1,6 +1,7 @@
-const User = require('../models/User');
+const User = require('../models/user');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const validatorMethod =require('../validation');
 
 const getUsers = async (req, res) => {
     try {
@@ -14,18 +15,43 @@ const getUsers = async (req, res) => {
 
 const createUsers = async (req, res) => {
     try {
-        console.log(req.body);
-        const { name, email, gender } = req.body;
-        console.log(User); // 
-        const newUser = await User.create({ name, email, gender });
-        const token = generateToken(newUser);
-        res.status(201).json({"user":newUser,'token':token});
+        const { name, email, gender } = req.body; 
+        const rules = {
+            name: {
+                required: true
+            },
+            email: {
+                required: true,
+                min: 10
+            }
+        };
+        const emailExists = await User.findOne({where :{email:email}});
+        const validationErrors =  await validatorMethod.validateData(rules,req.body);
+        if(emailExists){
+            const customError = {
+                email: 'Email already exists. Please use a different email address.'
+            };
+            const updatedErrors = { ...validationErrors, ...customError };
+
+            // Respond with a 409 status code and the updated errors
+            return res.status(409).json({ errors: updatedErrors });
+        }
+        
+        if(Object.keys(validationErrors).length>0){
+            res.status(500).json({ errors:validationErrors });
+        }else{
+           
+            const newUser = await User.create({ name, email, gender });
+            const token = generateToken(newUser);
+            res.status(201).json({"user":newUser,'token':token});
+        }
+
+       
     } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
 const sendMail = async(req,res)=>{
     try{
         const transporter = nodemailer.createTransport({
