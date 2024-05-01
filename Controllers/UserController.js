@@ -2,6 +2,7 @@ const User = require('../models/user');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const validatorMethod =require('../validation');
+const fs = require('fs');
 
 const getUsers = async (req, res) => {
     try {
@@ -15,6 +16,7 @@ const getUsers = async (req, res) => {
 
 const createUsers = async (req, res) => {
     try {
+        console.log("files",req.files);
         const { name, email, gender } = req.body; 
         const rules = {
             name: {
@@ -25,17 +27,19 @@ const createUsers = async (req, res) => {
                 min: 10
             }
         };
-        const emailExists = await User.findOne({where :{email:email}});
         const validationErrors =  await validatorMethod.validateData(rules,req.body);
-        if(emailExists){
-            const customError = {
-                email: 'Email already exists. Please use a different email address.'
-            };
-            const updatedErrors = { ...validationErrors, ...customError };
-
-            // Respond with a 409 status code and the updated errors
-            return res.status(409).json({ errors: updatedErrors });
+        if(email !=undefined){
+            const emailExists = await User.findOne({where :{email:email}});
+            if(emailExists){
+                const customError = {
+                    email: 'Email already exists. Please use a different email address.'
+                };
+                const updatedErrors = { ...validationErrors, ...customError };
+                return res.status(409).json({ errors: updatedErrors });
+            }
         }
+        
+        
         
         if(Object.keys(validationErrors).length>0){
             res.status(500).json({ errors:validationErrors });
@@ -44,6 +48,18 @@ const createUsers = async (req, res) => {
             const newUser = await User.create({ name, email, gender });
             const token = generateToken(newUser);
             res.status(201).json({"user":newUser,'token':token});
+
+            const imageData=req.files;
+            const imagePath = './images';
+            fs.writeFile(imagePath, imageData.image.data, 'base64', (err) => {
+                if (err) {
+                    console.error('Error saving image:', err);
+                    res.status(500).send('Error saving image');
+                } else {
+                    console.log('Image saved successfully:', imagePath);
+                    res.send('Image saved successfully');
+                }
+            });
         }
 
        

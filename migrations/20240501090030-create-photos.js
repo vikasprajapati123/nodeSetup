@@ -2,24 +2,25 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Users', {
+    await queryInterface.addIndex('Users', ['id']);
+    await queryInterface.createTable('Photos', {
       id: {
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id: {
-        type: Sequelize.INTEGER
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users', // Name of the referenced table
+          key: 'id' // Name of the referenced column
+        },
+        onUpdate: 'CASCADE', // Optional: Update photos if user id changes
+        onDelete: 'CASCADE'
       },
-      name: {
+      image: {
         type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      gender: {
-        type: Sequelize.ENUM('male', 'female', 'other'), // Define enum values
-        allowNull: true, // or false if gender is required
       },
       createdAt: {
         allowNull: false,
@@ -30,9 +31,9 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
-    await queryInterface.addIndex('Users', ['id']);
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('Photos');
     await queryInterface.dropTable('Users');
   }
 };
