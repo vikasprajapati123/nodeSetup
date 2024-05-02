@@ -9,6 +9,11 @@
             "date": 1714220825962,
             "name": "logs\\laravel-2024-04-27.log",
             "hash": "cdc8fad8235922797474f1dbae5aec819a8662ba6ccf5b41e5d3851b9a226977"
+        },
+        {
+            "date": 1714314239108,
+            "name": "logs\\laravel-2024-04-28.log",
+            "hash": "9f63484337b0a992eacdd731970c56cff3a00cac17dc6d3533486e17e2471716"
         }
     ],
     "hashType": "sha256"

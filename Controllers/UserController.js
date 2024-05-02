@@ -1,5 +1,8 @@
-const User = require('../models/User');
+const User = require('../models/user');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const validatorMethod =require('../validation');
+const fs = require('fs');
 
 const getUsers = async (req, res) => {
     try {
@@ -13,17 +16,58 @@ const getUsers = async (req, res) => {
 
 const createUsers = async (req, res) => {
     try {
-        console.log(req.body);
-        const { name, email, gender } = req.body;
-        console.log(User); // 
-        const newUser = await Usercreate({ name, email, gender });
-        res.status(201).json(newUser);
+        console.log("files",req.files);
+        const { name, email, gender } = req.body; 
+        const rules = {
+            name: {
+                required: true
+            },
+            email: {
+                required: true,
+                min: 10
+            }
+        };
+        const validationErrors =  await validatorMethod.validateData(rules,req.body);
+        if(email !=undefined){
+            const emailExists = await User.findOne({where :{email:email}});
+            if(emailExists){
+                const customError = {
+                    email: 'Email already exists. Please use a different email address.'
+                };
+                const updatedErrors = { ...validationErrors, ...customError };
+                return res.status(409).json({ errors: updatedErrors });
+            }
+        }
+        
+        
+        
+        if(Object.keys(validationErrors).length>0){
+            res.status(500).json({ errors:validationErrors });
+        }else{
+           
+            const newUser = await User.create({ name, email, gender });
+            const token = generateToken(newUser);
+            res.status(201).json({"user":newUser,'token':token});
+
+            const imageData=req.files;
+            const imagePath = './images';
+            fs.writeFile(imagePath, imageData.image.data, 'base64', (err) => {
+                if (err) {
+                    console.error('Error saving image:', err);
+                    res.status(500).send('Error saving image');
+                } else {
+                    console.log('Image saved successfully:', imagePath);
+                    res.send('Image saved successfully');
+                }
+            });
+        }
+
+       
     } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
 const sendMail = async(req,res)=>{
     try{
         const transporter = nodemailer.createTransport({
@@ -56,6 +100,33 @@ const sendMail = async(req,res)=>{
     }
 };
 
+const generateToken = (user) => {
+    return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+};
+
+const Login=async(req,res)=>{
+    const {email,password}=req.body;
+    try{
+        const user = await User.findOne({ where: { email: email } });
+        console.log("emailllllllllllllllllllll",user);
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+        const token = jwt.sign({ id: user.id, username: user.email,name:user.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.json({ token });
+    }
+    catch(error){
+        res.status(500).json({ "error":error });
+    } 
+};
+
+const getData=async(req,res)=>{
+    const user=req.user;
+    res.status(200).json({"user":user});
+}
+  
+
+
 
   
 
@@ -63,5 +134,7 @@ const sendMail = async(req,res)=>{
 module.exports = {
     getUsers,
     createUsers,
-    sendMail
+    sendMail,
+    Login,
+    getData
 };

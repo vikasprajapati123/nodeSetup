@@ -1,8 +1,32 @@
 Logger file create 
 
-
 1.winston package create (only create single file for example laravel.log)  npm install winston
 2.npm install winston winston-daily-rotate-file (daily basic file create )command
+
+
+*******************************Json Web token
+
+npm install jsonwebtoken
+Secret key manage=itself (randomly write)
+
+
+
+***************Model and migration create command
+
+sudo npx sequelize-cli model:generate --name Photos --attributes user_id:integer,image:string
+
+
+
+######################form data -send data package is compulsary
+
+const fileUpload =require('express-fileupload')
+app.use(fileUpload());
+
+##################3
+
+
+
+
 
 
 

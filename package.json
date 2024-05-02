@@ -10,11 +10,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-fileupload": "^1.5.0",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.6",
     "nodemailer": "^6.9.13",
     "sequelize": "^6.37.3",
+    "validator": "^13.11.0",
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0"
   }
