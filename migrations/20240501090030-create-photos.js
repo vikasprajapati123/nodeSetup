@@ -17,10 +17,13 @@ module.exports = {
           key: 'id' // Name of the referenced column
         },
         onUpdate: 'CASCADE', // Optional: Update photos if user id changes
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
+        allowNull: true,
       },
-      image: {
-        type: Sequelize.STRING
+      photos: {
+        type: Sequelize.STRING,
+        allowNull: true,
+
       },
       createdAt: {
         allowNull: false,
@@ -34,6 +37,5 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Photos');
-    await queryInterface.dropTable('Users');
   }
 };

@@ -1,8 +1,10 @@
 const User = require('../models/user');
+const Photos=require('../models/photos')
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const validatorMethod =require('../validation');
 const fs = require('fs');
+const path = require('path');
 
 const getUsers = async (req, res) => {
     try {
@@ -25,7 +27,7 @@ const createUsers = async (req, res) => {
             email: {
                 required: true,
                 min: 10
-            }
+            },
         };
         const validationErrors =  await validatorMethod.validateData(rules,req.body);
         if(email !=undefined){
@@ -38,28 +40,27 @@ const createUsers = async (req, res) => {
                 return res.status(409).json({ errors: updatedErrors });
             }
         }
-        
+        if (!req.files || !req.files.image) {
+            return res.status(409).json({ error: "please upload image" });
+        }
         
         
         if(Object.keys(validationErrors).length>0){
             res.status(500).json({ errors:validationErrors });
         }else{
            
-            const newUser = await User.create({ name, email, gender });
+            let newUser = await User.create({ name, email, gender });
             const token = generateToken(newUser);
-            res.status(201).json({"user":newUser,'token':token});
 
-            const imageData=req.files;
-            const imagePath = './images';
-            fs.writeFile(imagePath, imageData.image.data, 'base64', (err) => {
-                if (err) {
-                    console.error('Error saving image:', err);
-                    res.status(500).send('Error saving image');
-                } else {
-                    console.log('Image saved successfully:', imagePath);
-                    res.send('Image saved successfully');
-                }
-            });
+            const images = [];
+
+            for (const img of req.files.image) {
+                const uploadPath = path.join(__dirname, '../images', img.name);
+                await img.mv(uploadPath);
+                const createdImage = await Photos.create({ user_id: newUser.id, photos: img.name }); // Fix here
+                images.push(createdImage);
+            }
+            res.status(201).json({"user":newUser,"images":images,token:token});
         }
 
        

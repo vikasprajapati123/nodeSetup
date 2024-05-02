@@ -11,7 +11,6 @@ const validateData =async (validationRules,data)=>{
             errors[field] = `${field} is required.`;
             continue;
         }
-
         // Check other rules
         for (const rule in rules) {
             if (rule === 'required') continue; // Skip 'required' rule since it's already checked above

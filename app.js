@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const user_routes=require('./routes/user')
+const user_routes=require('./routes/user');
 const logger = require('./logger');
 const sequelize = require('./db');
 const bodyParser = require('body-parser');
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 
 
 
-app.use('/api',user_routes)
+app.use('/api',user_routes);
   
 // Start the server
 app.listen(port, () => {
