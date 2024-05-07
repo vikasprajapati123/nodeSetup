@@ -36,7 +36,12 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db);
   }
 });
+const Photos = db['Photos'];
+const User = db['User'];
 
+// Set up association
+Photos.belongsTo(User, { foreignKey: 'user_id' });
+Photos.belongsTo(User, { foreignKey: 'user_id' });
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

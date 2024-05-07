@@ -6,14 +6,9 @@
     "auditLog": "logs\\.ea5c42e0a4fc0157a6c00832c1d990d019a79073-audit.json",
     "files": [
         {
-            "date": 1714314239108,
-            "name": "logs\\laravel-2024-04-28.log",
-            "hash": "9f63484337b0a992eacdd731970c56cff3a00cac17dc6d3533486e17e2471716"
-        },
-        {
-            "date": 1714673906879,
-            "name": "logs/laravel-2024-05-02.log",
-            "hash": "cfd9bb423a9c2c3d7f9208da8b8a958fab1e5518ef72d84b88952c07f38cca78"
+            "date": 1715102547506,
+            "name": "logs/laravel-2024-05-07.log",
+            "hash": "c6a1980b30652acc83c79b50576f4e0ed774598339ae00a17a49b8ada4bbd9bc"
         }
     ],
     "hashType": "sha256"
